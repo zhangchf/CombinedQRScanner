@@ -2,6 +2,8 @@ package qrcodescanner.zxing;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Handler;
@@ -16,6 +18,7 @@ import com.google.zxing.LuminanceSource;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.NotFoundException;
 import com.google.zxing.PlanarYUVLuminanceSource;
+import com.google.zxing.RGBLuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
@@ -196,5 +199,41 @@ public class ZXingScannerView extends BarcodeScannerView {
         }
 
         return source;
+    }
+
+    public static Result decodeImage(String path) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+        int sampleSize = options.outHeight / 400;
+        if (sampleSize <= 0) {
+            sampleSize = 1;
+        }
+        options.inSampleSize = sampleSize;
+        options.inJustDecodeBounds = false;
+        Bitmap bMap = BitmapFactory.decodeFile(path, options);
+
+        Result result = null;
+        int[] intArray = new int[bMap.getWidth() * bMap.getHeight()];
+        bMap.getPixels(intArray, 0, bMap.getWidth(), 0, 0, bMap.getWidth(), bMap.getHeight());
+        LuminanceSource source = new RGBLuminanceSource(bMap.getWidth(), bMap.getHeight(), intArray);BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+
+        try {
+            result = getmMultiFormatReader().decode(bitmap);
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private static MultiFormatReader getmMultiFormatReader() {
+        ArrayList<BarcodeFormat> formats = new ArrayList<>();
+        formats.add(BarcodeFormat.QR_CODE);
+        Map<DecodeHintType,Object> hints = new EnumMap<>(DecodeHintType.class);
+        hints.put(DecodeHintType.POSSIBLE_FORMATS, ALL_FORMATS);
+
+        MultiFormatReader multiFormatReader = new MultiFormatReader();
+        multiFormatReader.setHints(hints);
+        return multiFormatReader;
     }
 }

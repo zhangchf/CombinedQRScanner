@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+    <RelativeLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -44,7 +44,18 @@
             app:qrcv_toolbarHeight="56dp"
             app:qrcv_topOffset="90dp"/>
 
-    </FrameLayout>
+        <ImageButton
+            android:id="@+id/btn_pick_qrcode_from_gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="80dp"
+            android:background="@drawable/qrcode_pick_image_bg"
+            android:src="@drawable/qrcode_pick_image"
+            android:onClick="pickQRCodeImage"/>
+
+    </RelativeLayout>
 
 
     <android.support.v7.widget.Toolbar

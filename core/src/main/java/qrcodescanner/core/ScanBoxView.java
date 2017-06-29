@@ -237,8 +237,6 @@ public class ScanBoxView extends View {
             return;
         }
 
-        Log.d(TAG, "onDraw");
-
         // 画遮罩层
         drawMask(canvas);
 
